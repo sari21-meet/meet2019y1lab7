@@ -1,6 +1,6 @@
 import turtle
 import random #We'll need this later in the lab
-
+import time
 turtle.tracer(1,0) #This helps the turtle move more smoothly
 
 SIZE_X=800
@@ -12,7 +12,7 @@ turtle.penup()
 SQUARE_SIZE = 20
 START_LENGTH = 6
 TIME_STEP = 100
-
+turtle.bgcolor("lightgreen")
 #Initialize lists
 pos_list = []
 stamp_list = []
@@ -85,16 +85,20 @@ turtle.onkeypress(right,"Right")
 
 turtle.listen()
 
-turtle.register_shape("trash.gif") #Add trash picture
+turtle.register_shape("apple.gif") #Add trash picture
                       # Make sure you have downloaded this shape 
                       # from the Google Drive folder and saved it
                       # in the same folder as this Python script
 
 food = turtle.clone()
-food.shape("trash.gif") 
-
+food.shape("apple.gif") 
+turtle.register_shape("goldapple.gif")
+food2 = turtle.clone()
+food2.shape("goldapple.gif")
 #Locations of food
 food_pos = [(100,100), (-100,100), (-100,-100), (100,-100)]
+food2_pos = []
+food2_stamps = []
 food_stamps = []
 # Write code that:
 #1. moves the food turtle to each food position
@@ -106,6 +110,13 @@ for this_food_pos in food_pos :
     food.goto(this_food_pos)
     fstamp = food.stamp()
     food_stamps.append(fstamp)
+def make_special():
+    food2.goto(0,0)
+    food2_stamps.append(food2.stamp())
+    bitch = food2.pos()
+    food2_pos.append(bitch)
+    turtle.ontimer(make_special,25000)
+make_special() 
 def make_food():
     #The screen positions go from -SIZE/2 to +SIZE/2
     #But we need to make food pieces only appear on game squares
@@ -127,6 +138,8 @@ def make_food():
     food_pos.append(food.pos())
     foostamp=food.stamp()
     food_stamps.append(foostamp)
+    
+    
 def move_snake():
     my_pos = snake.pos()
     x_pos = my_pos[0]
@@ -162,7 +175,18 @@ def move_snake():
     elif snake.pos() in pos_list[0:-1]:
         print("You have eaten yourself!")
         quit()
-    
+    if snake.pos() in food2_pos:
+        global TIME_STEP
+        food2_index = food2_pos.index(snake.pos())
+        food2.clearstamp(food2_stamps[food2_index])
+        food2_pos.pop(food2_index)
+        food2_stamps.pop(food2_index)
+        new_stamp()
+        new_stamp()
+        new_stamp()
+        new_stamp()
+        TIME_STEP-= 10
+        print("SUPER!")
     #HINT: This if statement may be useful for Part 8
 
     #Don't change the rest of the code in move_snake() function:
@@ -194,7 +218,7 @@ def move_snake():
         make_food()
     turtle.ontimer(move_snake,TIME_STEP)
      
-
+food2.goto(0,0)
 move_snake()
 turtle.mainloop()
 
